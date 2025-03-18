@@ -1,25 +1,19 @@
 <section class="content">
 	<?php $u=null;
- 	if(isset($_SESSION["user_id"]) &&$_SESSION["user_id"]!=""):
-  	$u = UserData::getById($_SESSION["user_id"]);
-  	$sett = SettingData::getByAdmin($u->admin_id); ?>
+    if(isset($_SESSION["user_id"]) &&$_SESSION["user_id"]!=""):
+    $u = UserData::getById($_SESSION["user_id"]);
+  	$currency = ConfigurationData::getByPreffix("currency")->val; ?>
 	<div class="row">
 		<div class="col-md-12">
 			<h2><i class='fa fa-usd'></i> Lista de Ventas</h2>
-			<p>Lista de ventas realizadas en el sistema.</p>
-		    <ol class="breadcrumb">
-		      <li><a href="./?view=home"><i class="fa fa-dashboard"></i> Inicio</a></li>
-		      <li><i class="fa fa-money"></i> Finanzas</li>
-		      <li class="active"><i class="fa fa-dollar"></i> Lista de Ventas</li>
-		    </ol>
-		    <?php if ($u->id==1){
-		    		$sells = SellData::getSells();
-		      	}else if($u->id==$u->admin_id){
-		      		$sells = SellData::getSellsByAdmin($u->admin_id);
+			<div class="clearfix"></div>
+		    <?php if($u->kind==1){
+		    		$products = SellData::getSells();
 		      	}else{
-		         	$sells = SellData::getSellsByUser($u->id);
+		         	$products = SellData::getSellsByUserId($_SESSION["user_id"]);
 		      	} ?>
-			<?php if(count($sells)>0){ ?>
+			<?php if(count($products)>0){ ?>
+			<br>
 			<div class="box">
 	  			<div class="box-body no-padding">
 	  				<div class="box-body">
@@ -30,22 +24,17 @@
 									<th style="text-align: center; width: 30px;">Boleta</th>
 									<th style="text-align: center;">Cantidad</th>
 									<th style="text-align: center;">Cliente</th>
-									<th style="text-align: center;">Subtotal&nbsp;<?php echo $sett->coin; ?></th>
-									<th style="text-align: center;">Descuento&nbsp;<?php echo $sett->coin; ?></th>
-									<th style="text-align: center;">Total&nbsp;<?php echo $sett->coin; ?></th>
+									<th style="text-align: center;">Total&nbsp;<?php echo $currency; ?></th>
 									<th style="text-align: center;">Fecha</th>
+									<?php if($u->kind==1):?><th style="text-align: center;">Usuario</th>
 									<th style="text-align: center;">Sucursal</th>
-									<?php if($u->id==$u->admin_id): ?><th style="text-align: center;">Usuario</th><?php endif; ?>
-									<?php if($u->id==1): ?><th style="text-align: center;">Administrador</th><?php endif; ?>
-									<th style="text-align: center; width: 150px;">Acción</th>
+									<th style="text-align: center; width: 40px;">Acción</th><?php endif; ?></td>
 								</thead>
-								<?php for($number=0; $number<1; $number++); //variable incremental
-								foreach($sells as $sell): 
-									$user = $sell->getUser();
-									$admin = $sell->getAdmin(); ?>
+								<?php for($number = count($products); $number>count($products); $number--); //variable decremental
+								foreach($products as $sell):?>
 								<tr>
-									<td style="text-align: center;"><?php echo $number; ?></td> <?php $number++; ?><!--var decremental-->
-									<td><a href="index.php?view=sell_one&id=<?php echo $sell->id; ?>" ><?php echo "Boleta&nbsp;#".$sell->ref_id; ?></a></td>
+									<td style="text-align: center;"><?php echo $number; ?></td> <?php $number--; ?><!--var decremental-->
+									<td style="text-align: right;"><a href="index.php?view=sell_one&id=<?php echo $sell->id; ?>" class="btn btn-xs btn-default"><?php echo "#".$sell->ref_id; ?></a></td>
 									<td style="text-align: center;"><?php $operations = OperationData::getAllProductsBySellId($sell->id);
 										echo count($operations)." Par(es)"; ?></td>
 									<td><?php if($sell->person_id!=""):
@@ -54,17 +43,13 @@
 										<?php if($sell->user_id!=""):
 										$user = $sell->getUser(); ?>
 										<?php endif; ?><?php echo $client->name." ".$client->lastname;?></td>
-									<td style="text-align: right;"><b><?php echo $sett->coin." ".number_format($sell->total+$sell->discount,2,".",","); ?></b></td>
-									<td style="text-align: right;"><b><?php echo $sett->coin." ".number_format($sell->discount,2,".",","); ?></b></td>
-									<td style="text-align: right;"><b><?php $total= $sell->total;
-										echo $sett->coin." ".number_format($total,2,".",","); ?></b></td>
-									<td style="text-align: center;"><?php echo $sell->created_at; ?></td>
+									<td style="text-align: right;"><?php $total= $sell->total;
+										echo $currency." ".number_format($total,2,".",","); ?></td>
+									<td style="text-align: right;"><?php echo $sell->created_at; ?></td>
+									<?php if($u->kind==1):?><td><?php $user=UserData::getById($sell->user_id); echo $user->name." ".$user->lastname; ?></td>
 									<td><?php $suc = StockData::getById($sell->stock_id); echo $suc->name; ?></td>
-										<?php if($u->id==$u->admin_id): ?><td><?php echo $user->name." ".$user->lastname; ?></td><?php endif; ?>
-										<?php if($u->id==1): ?><td><?php echo $admin->name." ".$admin->lastname; ?></td><?php endif; ?>
 									<td style="text-align: center;">
-										<a href="fact.php?id=<?php echo $sell->id; ?>" class="btn btn-success btn-xs" target="_blank"><i class="fa fa-print"></i> Guía</a>
-										<a href="index.php?action=sell_del&id=<?php echo $sell->id; ?>" onclick="return confirm('¿Está seguro de eliminar?')" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Eliminar</a></td>
+										<a href="index.php?action=sell_del&id=<?php echo $sell->id; ?>" onclick="return confirm('¿Está seguro de eliminar?')" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></a></td><?php endif; ?></td>
 								</tr>
 								<?php endforeach; ?>
 							</table>
@@ -74,7 +59,7 @@
 			<div class="clearfix"></div>
 			<?php }else{ ?>
 			<div class="jumbotron">
-			<h3>No hay ventas</h3>
+			<h2>No hay ventas</h2>
 			<p>No se ha realizado ninguna venta.</p>
 			</div>
 			<?php } ?>

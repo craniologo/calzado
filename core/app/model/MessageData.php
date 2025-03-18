@@ -4,8 +4,7 @@ class MessageData {
 
 	public function __construct(){
 
-
-		$this->created_at = "NOW()";
+		$this->created_at = "(date_sub(NOW(),interval 5 hour))";
 	}
 
 	public function getFrom(){ return UserData::getById($this->user_from);}

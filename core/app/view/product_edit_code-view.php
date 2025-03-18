@@ -37,7 +37,7 @@
               <?php endforeach;?>
             </select>
           </div>
-        </div>
+        </div>         
         <div class="form-group">
           <label for="inputEmail1" class="col-lg-2 control-label">Género*</label>
           <div class="col-md-3">
@@ -107,8 +107,8 @@ function ValidarImagen(obj){
       alert('El archivo cagrado no es una imagen');
       location.reload();
   }else{
-          alert('Imagen correcta :)')
+          alert('Imagen correcta :)')                
       img.src = URL.createObjectURL(uploadFile);
     }
-  }
+  }              
 </script>

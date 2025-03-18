@@ -1,11 +1,7 @@
 <section class="content">
-  	<?php $u=null;
-  	if(isset($_SESSION["user_id"]) &&$_SESSION["user_id"]!=""):
-  	$u = UserData::getById($_SESSION["user_id"]); ?>
 	<div class="row">
 		<div class="col-md-12">
-			<h2><i class="fa fa-bell-o"></i> Alertas de Stock</h2>
-			<p>Aquí se visulizan las alertas cuando los productos alcanzan el mínimo de stock.</p>
+			<h2><i class="glyphicon glyphicon-alert"></i> Alertas de Stock</h2>
 			<div class="clearfix"></div>
 			<?php $found=false;
 			$products = ProductData::getAll();
@@ -17,12 +13,8 @@
 					} } ?>
 			<?php if($found):?>
 			<?php endif;?>
-			<?php if($u->id==1){
-				$curr_products = ProductData::getAll();
-			}else{
-				$curr_products = ProductData::getAllByAdmin($u->admin_id);
-			}
-			if(count($curr_products)>0){ ;?>
+			<?php $curr_products = ProductData::getAll(); ?>
+			<?php if(count($curr_products)>0){ ;?>
 			<div class="box">
 				<div class="box-body no-padding">
 					<div class="box-body">
@@ -58,17 +50,13 @@
 							</table>
 						</div>
 					</div>
-					<div class="btn-group pull-right">
-						<?php }else{ ?>
-						<div class="jumbotron">
-							<h2>No hay alertas</h2>
-							<p>Por el momento no hay alertas de inventario, estas se muestran cuando el inventario ha alcanzado el nivel minimo.</p>
-						</div>
-						<?php } ?>
+				<div class="btn-group pull-right">
+					<?php }else{ ?>
+					<div class="jumbotron">
+						<h2>No hay alertas</h2>
+						<p>Por el momento no hay alertas de inventario, estas se muestran cuando el inventario ha alcanzado el nivel minimo.</p>
 					</div>
+					<?php } ?>
 				</div>
-			</div>
-		</div>
 	</div>
-	<?php endif; ?>
 </section>

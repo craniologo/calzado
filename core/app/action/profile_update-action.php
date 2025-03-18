@@ -2,19 +2,20 @@
 
 if(count($_POST)>0){
 	$user = UserData::getById($_POST["user_id"]);
+
+  if(isset($_FILES["image"])){
+    $image = new Upload($_FILES["image"]);
+    if($image->uploaded){
+      $image->Process("storage/profiles/");
+      if($image->processed){
+        $user->image = $image->file_dst_name;
+      }
+    }
+  }
 	$user->name = $_POST["name"];
 	$user->lastname = $_POST["lastname"];
-	$user->username = $_POST["email"];
+	$user->username = $_POST["username"];
 	$user->email = $_POST["email"];
-	  if(isset($_FILES["image"])){
-	    $image = new Upload($_FILES["image"]);
-	    if($image->uploaded){
-	      $image->Process("storage/profiles/");
-	      if($image->processed){
-	        $user->image = $image->file_dst_name;
-	      }
-	    }
-	  }
 	$user->update_profile();
 
 	if($_POST["password"]!=""){

@@ -1,8 +1,8 @@
 <section class="content">
 	<?php $u=null;
-	if(isset($_SESSION["user_id"]) &&$_SESSION["user_id"]!=""):
-	$u = UserData::getById($_SESSION["user_id"]);
-	$sett = SettingData::getByAdmin($u->admin_id); ?>
+  	if(isset($_SESSION["user_id"]) &&$_SESSION["user_id"]!=""):
+  	$u = UserData::getById($_SESSION["user_id"]);
+  	$currency = ConfigurationData::getByPreffix("currency")->val; ?>
 	<div class="row">
 		<div class="col-md-12">
 			<h2><i class="fa fa-refresh"></i> Resumen de Reabastecimiento</h2>
@@ -44,13 +44,10 @@
 									<td>Proveedor</td>
 									<td><?php echo $client->name." ".$client->lastname;?></td>
 								</tr>
-								<tr>
-									<td>RUC</td>
-									<td><?php echo $client->ruc;?></td>
-								</tr>
+
 								<?php endif; ?>
 								<?php if($sell->user_id!=""):
-								$user = $sell->getAdmin(); ?>
+								$user = $sell->getUser(); ?>
 								<tr>
 									<td>Atendido por</td>
 									<td><?php echo $user->name." ".$user->lastname;?></td>
@@ -73,8 +70,8 @@
 									<th style="text-align: center;">Color</th>
 									<th style="text-align: center;">Talla</th>
 									<th style="text-align: center;">Cant</th>
-									<th style="text-align: center;">Costo&nbsp;<?php echo $sett->coin; ?></th>
-									<th style="text-align: center;">Total&nbsp;<?php echo $sett->coin; ?></th>
+									<th style="text-align: center;">Costo</th>
+									<th style="text-align: center;">Total</th>
 								</thead>
 								<?php for($number=0; $number<1; $number++); //variable incremental
 								foreach($operations as $operation){
@@ -86,8 +83,8 @@
 									<td><?php $color = ColorData::getById($product->color_id); echo $color->name; ?></td>
 									<td style="text-align: right;"><?php $size = Serie_sizeData::getById($operation->size_id); echo $size->size; ?></td>
 									<td style="text-align: right;"><?php echo $operation->q ;?></td>
-									<td style="text-align: right;"><?php echo $sett->coin." ".number_format($product->price_in,2,".",",") ;?></td>
-									<td style="text-align: right;"><b><?php echo $sett->coin." ".number_format($operation->q*$product->price_in,2,".",",");$total+=$operation->q*$product->price_in;?></b></td>
+									<td style="text-align: right;"><?php echo $currency." ".number_format($product->price_in,2,".",",") ;?></td>
+									<td style="text-align: right;"><b><?php echo $currency." ".number_format($operation->q*$product->price_in,2,".",",");$total+=$operation->q*$product->price_in;?></b></td>
 								</tr>
 								<?php
 								}
@@ -97,11 +94,11 @@
 					</div>
 				</div>
 			</div>
-			<h3>Total: <?php echo $sett->coin." ".number_format($total,2,'.',','); ?></h3>
+			<h2>Total: <?php echo $currency." ".number_format($total,2,'.',','); ?></h2>
 			<?php ?>	
 			<?php else:?>
 			501 Internal Error
-			<?php endif; ?><br><br><br><br><br>
+			<?php endif; ?>
 		</div>
 	</div>
 	<?php endif; ?>

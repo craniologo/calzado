@@ -1,13 +1,9 @@
-<section class="content"> 
+<section class="content">
+	<?php $currency = ConfigurationData::getByPreffix("currency")->val; ?>
 	<div class="row">
 		<div class="col-md-12">
 			<h2><i class='fa fa-exchange'></i> Lista de Traspasos</h2>
-	        <ol class="breadcrumb">
-	          <li><a href="./?view=home"><i class="fa fa-dashboard"></i> Inicio</a></li>
-	          <li><i class="fa fa-cube"></i> Stock</li>
-	          <li class="active"><i class="fa fa-exchange"></i> Traspasos</li>
-	        </ol>
-			<a href="index.php?view=traspase" class="btn btn-default"><i class='fa fa fa-exchange'></i> Nuevo Traspaso</a>
+			<a href="index.php?view=traspase" class="btn btn-primary"><i class='fa fa fa-exchange'></i> Nuevo Traspaso</a>
 			<br><br>
 			<?php $products = null;
 			if(isset($_SESSION["user_id"])){
@@ -29,7 +25,7 @@
 								<thead>
 									<th style="text-align: center; width:30px;">N°</th>
 									<th style="text-align: center; width: 30px;">Operación</th>	
-									<th style="text-align: center;">Total</th>
+									<th style="text-align: center;">Total&nbsp;<?php echo $currency; ?></th>
 									<th style="text-align: center;">Usuario</th>
 									<th style="text-align: center;">Origen </th>
 									<th style="text-align: center;">Destino </th>
@@ -42,7 +38,7 @@
 								<tr>
 									<td style="text-align: center;"><?php echo $number; ?></td> <?php $number++; ?><!--var incremen-->
 									<td style="text-align: right;"><a href="index.php?view=onetraspase&id=<?php echo $sell->id; ?>" class="btn btn-xs btn-default"><?php echo $sell->ref_id; ?></a></td>
-									<td style="text-align: right;"><?php $total= $sell->total-$sell->discount; echo "<b>S/ ".number_format($total,2,".",",")."</b>"; ?></td>
+									<td style="text-align: right;"><?php $total= $sell->total-$sell->discount; echo "<b>".number_format($total,2,".",",")."</b>"; ?></td>
 									<td> <?php if($sell->user_id!=null){$c= $sell->getUser();echo $c->name." ".$c->lastname;} ?> </td>
 									<td><?php echo $sell->getStockFrom()->name; ?></td>
 									<td><?php echo $sell->getStockTo()->name; ?></td>

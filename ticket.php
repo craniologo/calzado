@@ -15,6 +15,9 @@ include "fpdf/fpdf.php";
 session_start();
 if(isset($_SESSION["user_id"])){ Core::$user = UserData::getById($_SESSION["user_id"]); }
 $title = ConfigurationData::getByPreffix("ticket_title")->val;
+$imp_name = ConfigurationData::getByPreffix("imp-name")->val;
+$imp_val = ConfigurationData::getByPreffix("imp-val")->val;
+$currency = ConfigurationData::getByPreffix("currency")->val;
 
 $stock = StockData::getPrincipal();
 $sell = SellData::getById($_GET["id"]);
@@ -22,86 +25,103 @@ $operations = OperationData::getAllProductsBySellId($_GET["id"]);
 $user = $sell->getUser();
 $client = $sell->getPerson();
 
+$total = $sell->total+$sell->discount;
+$disc = $sell->discount;
+$subt = $total-$disc;
+$igv = $subt*($imp_val/100);
+$total_igv = $subt+$igv;
 
-$pdf = new FPDF($orientation='P',$unit='mm', array(80,170));
+$pdf = new FPDF($orientation='P',$unit='mm', array(80,300));
 $pdf->AddPage();
-$pdf->SetFont('Arial','B',10);    //Letra Arial, negrita (Bold), tam. 20
+$pdf->SetFont('Arial','B',15);    //Letra Arial, negrita (Bold), tam. 20
 //$pdf->setXY(5,0);
-$pdf->setY(2);
+$pdf->setY(5);
 $pdf->setX(2);
-$pdf->Cell(5,5,strtoupper($title));
+$pdf->MultiCell(76,5,strtoupper(utf8_decode($title)),0,'C');
 $pdf->SetFont('Arial','B',8);    //Letra Arial, negrita (Bold), tam. 20
 $pdf->setX(2);
-$pdf->Cell(8,12,"Dir: ".strtoupper($stock->address));
+$pdf->MultiCell(76,5,"DIR: ".strtoupper(utf8_decode($stock->address)),0,'C');
+//$pdf->Ln(5);
 $pdf->setX(2);
-$pdf->Cell(8,18,"Telf: ".strtoupper($stock->phone));
+$pdf->Cell(76,5,"TEL: ".strtoupper($stock->phone),0,0,'C');
+$pdf->Ln(5);
 $pdf->setX(2);
-$pdf->Cell(8,24,"FOLIO: ".$sell->id);
+$pdf->Cell(8,5,"TICKET: ".$sell->id);
+$pdf->Ln(5);
 $pdf->setX(2);
-$pdf->Cell(8,30,"FECHA: ".$sell->created_at);
+$pdf->Cell(8,5,"FECHA: ".$sell->created_at);
+$pdf->Ln(5);
 $pdf->setX(2);
-$pdf->Cell(8,36,"Cliente: ".strtoupper($client->name." ".$client->lastname));
+$pdf->Cell(8,5,"CLIENTE: ".strtoupper(utf8_decode($client->name." ".$client->lastname)));
+$pdf->Ln(5);
 $pdf->setX(2);
-$pdf->Cell(8,42,"RUC: ".strtoupper($client->no));
+$pdf->Cell(8,5,"RUC: ".strtoupper($client->ruc));
+$pdf->Ln(5);
 $pdf->setX(2);
-$pdf->Cell(8,48,'-------------------------------------------------------------------');
+$pdf->Cell(8,5,'------------------------------------------------------------------------------');
+$pdf->Ln(5);
 $pdf->setX(2);
-$pdf->Cell(8,54,'CANT.  ARTICULO       		  PRECIO           TOTAL');
+$pdf->Cell(8,5,'CA.  ARTICULO       		         PRECIO           TOTAL');
 
 $total =0;
-$off = 60;
+$off = 15;
 foreach($operations as $op){
 $product = $op->getProduct();
 $pdf->setX(2);
 $pdf->Cell(5,$off,"$op->q");
-$pdf->setX(10);
-$pdf->Cell(35,$off,  strtoupper(substr($product->name, 0,12)) );
+$pdf->setX(8);
+$pdf->Cell(35,$off,  strtoupper(substr(utf8_decode($product->modelo), 0,12)));
 $pdf->setX(20);
-$pdf->Cell(29,$off,  "S/ ".number_format($product->price_out,2,".",",") ,0,0,"R");
+$pdf->Cell(29,$off,  $currency.' '.number_format($product->price_out,2,".",",") ,0,0,"R");
 $pdf->setX(32);
-$pdf->Cell(35,$off,  "S/ ".number_format($op->q*$product->price_out,2,".",",") ,0,0,"R");
+$pdf->Cell(35,$off,  $currency.' '.number_format($op->q*$product->price_out,2,".",",") ,0,0,"R");
 
 //    ".."  ".number_format($op->q*$product->price_out,2,".",","));
 $total += $op->q*$product->price_out;
 $off+=6;
 }
+$stotal = $total-$sell->discount;
 $pdf->setX(2);
-$pdf->Cell(5,$off+3,"DESCUENTO: " );
+$pdf->Cell(5,$off+3,"TOTAL: " );
 $pdf->setX(62);
-$pdf->Cell(5,$off+3,"S/ ".number_format($total*$sell->discount/100,2,".",","),0,0,"R");
+$pdf->Cell(5,$off+3,$currency.' '.number_format($total,2,".",","),0,0,"R");
 $pdf->setX(2);
-$pdf->Cell(5,$off+9,"SUBTOTAL:  " );
+$pdf->Cell(5,$off+9,"DESCUENTO: " );
 $pdf->setX(62);
-$pdf->Cell(5,$off+9,"S/ ".number_format($total*.82,2,".",","),0,0,"R");
+$pdf->Cell(5,$off+9,$currency.' '.number_format($sell->discount,2,".",","),0,0,"R");
 $pdf->setX(2);
-$pdf->Cell(5,$off+15,"IGV (18%):  " );
+$pdf->Cell(5,$off+15,"SUBTOTAL:  " );
 $pdf->setX(62);
-$pdf->Cell(5,$off+15,"S/ ".number_format($total*.18,2,".",","),0,0,"R");
+$pdf->Cell(5,$off+15,$currency.' '.number_format($subt,2,".",","),0,0,"R");
 $pdf->setX(2);
-$pdf->Cell(5,$off+21,"TOTAL: " );
+$pdf->Cell(5,$off+21,$imp_name.' ('.$imp_val.'%):  ');
 $pdf->setX(62);
-$pdf->Cell(5,$off+21,"S/ ".number_format($total - ($total*$sell->discount/100),2,".",","),0,0,"R");
+$pdf->Cell(5,$off+21,$currency.' '.number_format($igv,2,".",","),0,0,"R");
+$pdf->setX(2);
+$pdf->Cell(5,$off+27,"TOTAL A PAGAR: " );
+$pdf->setX(62);
+$pdf->Cell(5,$off+27,$currency.' '.number_format($total_igv,2,".",","),0,0,"R");
 
 $pdf->setX(2);
-$pdf->Cell(5,$off+27,'-------------------------------------------------------------------');
+$pdf->Cell(5,$off+33,'------------------------------------------------------------------------------');
 $pdf->setX(2);
-$pdf->Cell(5,$off+33,"EFECTIVO: " );
+$pdf->Cell(5,$off+39,"EFECTIVO: " );
 $pdf->setX(62);
-$pdf->Cell(5,$off+33,"S/ ".number_format($sell->cash,2,".",","),0,0,"R");
+$pdf->Cell(5,$off+39,$currency.' '.number_format($sell->cash,2,".",","),0,0,"R");
 
 $pdf->setX(2);
-$pdf->Cell(5,$off+39,"CAMBIO: " );
+$pdf->Cell(5,$off+45,"VUELTO: " );
 $pdf->setX(62);
-$pdf->Cell(5,$off+39,"S/ ".number_format($sell->cash-($total - ($total*$sell->discount/100)),2,".",","),0,0,"R");
+$pdf->Cell(5,$off+45,$currency.' '.number_format($sell->cash-$stotal,2,".",","),0,0,"R");
 
 $pdf->setX(2);
-$pdf->Cell(5,$off+45,'-------------------------------------------------------------------');
+$pdf->Cell(5,$off+51,'------------------------------------------------------------------------------');
 $pdf->setX(2);
-$pdf->Cell(5,$off+51,"Sucursal: ".strtoupper($stock->name));
+$pdf->Cell(5,$off+57,"SUCURSAL: ".strtoupper(utf8_decode($stock->name)));
 $pdf->setX(2);
-$pdf->Cell(5,$off+57,'Atendido por: '.strtoupper($user->name." ".$user->lastname));
+$pdf->Cell(5,$off+63,'VENDEDOR: '.strtoupper(utf8_decode($user->name." ".$user->lastname)));
 $pdf->setX(10);
-$pdf->Cell(5,$off+63,"GRACIAS POR SU COMPRA");
+$pdf->Cell(5,$off+69,"GRACIAS POR SU COMPRA");
 $pdf->setX(2);
 
 $pdf->output();

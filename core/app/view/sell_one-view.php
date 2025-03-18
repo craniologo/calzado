@@ -1,8 +1,8 @@
 <section class="content">
-  	<?php $u=null;
+	<?php $u=null;
   	if(isset($_SESSION["user_id"]) &&$_SESSION["user_id"]!=""):
   	$u = UserData::getById($_SESSION["user_id"]);
-  	$sett = SettingData::getByAdmin($u->admin_id); ?>
+  	$currency = ConfigurationData::getByPreffix("currency")->val; ?>
 	<div class="row">
 		<div class="col-md-12">
 			<h2><i class="fa fa-usd"></i> Resumen de Venta</h2>
@@ -37,7 +37,8 @@
 							<div class="box-body table-responsive">
 								<table class="table table-bordered">
 								<?php if($sell->person_id!=""):
-								$client = $sell->getPerson(); ?>
+								$client = $sell->getPerson();
+								?>
 								<tr>
 									<td style="width:100px";>Operación N°</td>
 									<td><?php echo $sell->ref_id; ?></td>
@@ -81,36 +82,31 @@
 										<th style="text-align: center;">Producto</th>
 										<th style="text-align: center;">Talla</th>
 										<th style="text-align: center;">Cant</th>
-										<th style="text-align: center;">Unit&nbsp;<?php echo $sett->coin; ?></th>
-										<th style="text-align: center;">Total&nbsp;<?php echo $sett->coin; ?></th>
+										<th style="text-align: center;">P. Unit</th>
+										<th style="text-align: center;">Total</th>
 									</thead>
 									<?php for($number=0; $number<1; $number++); //variable incremental
 									foreach($operations as $operation){
-										$product  = $operation->getProduct();
-										$acum = 0;?>
+										$product  = $operation->getProduct();?>
 									<tr>
 										<td style="text-align: center;"><?php echo $number; ?></td> <?php $number++; ?><!--var incremen-->
 										<td style="text-align: right;"><?php echo $product->barcode ;?></td>
 										<td><?php echo $product->modelo." ".$product->sex." ".ColorData::getById($product->color_id)->name; ?></td>
 										<td style="text-align: right;"><?php $size = Serie_sizeData::getById($operation->size_id); echo $size->size; ?></td>
 										<td style="text-align: right;"><?php echo $operation->q ;?></td>
-										<td style="text-align: right;"><?php echo $sett->coin." ".number_format($product->price_out, 2, '.', '') ;?></td>
-										<td style="text-align: right;"><?php echo $sett->coin." ".number_format($operation->q*$product->price_out, 2, '.', '');$total+=$operation->q*$product->price_out;?></td>
+										<td style="text-align: right;"><?php echo $currency." ".number_format($product->price_out, 2, '.', '') ;?></td>
+										<td style="text-align: right;"><?php echo $currency." ".number_format($operation->q*$product->price_out, 2, '.', '');$total+=$operation->q*$product->price_out;?></td>
 									</tr>
-									<?php $acum+=$total; ?>
 									<?php }?>
 								</table>
-								<h4>Acumulado: <?php echo $sett->coin.' '.number_format($acum,2,".",",")?></h4>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<?php $acumulado = $total+$sell->discount;
-				$disc = $sell->discount;
-				$total = $sell->total;
-				$subtotal = $total/(1+$sett->tax/100);
-				$igv = $subtotal*($sett->tax/100); ?>
+			<?php $total1 = number_format($total-$sell->discount, 2, '.', '');
+			$subt = number_format($total1*.82, 2, '.', '');
+			$igv = number_format($total1*.18, 2, '.', ''); ?>
 			<div class="col-md-3">
 				<div class="box">
 		  			<div class="box-body no-padding">
@@ -118,20 +114,24 @@
 							<div class="box-body table-responsive">
 								<table class="table table-bordered">
 									<tr>
-										<td>Descuento <?php echo $sett->coin; ?>:</td>
-										<td style="text-align: right;"><?php echo number_format($disc, 2, '.', ''); ?></td>
-									</tr>
-									<tr>
-										<td>Subtotal <?php echo $sett->coin; ?>:</td>
-										<td style="text-align: right;"><?php echo number_format($subtotal, 2, '.', ''); ?></td>
-									</tr>
-									<tr>
-										<td>IGV<?php echo "(".$sett->tax."%) ".$sett->coin; ?>:</td>
-										<td style="text-align: right;"><?php echo number_format($igv, 2, '.', ''); ?></td>
-									</tr>
-									<tr>
-										<td>Total a Pagar <?php echo $sett->coin; ?>:</td>
+										<td>Total(<?php echo $currency; ?>):</td>
 										<td style="text-align: right;"><?php echo number_format($total, 2, '.', ''); ?></td>
+									</tr>
+									<tr>
+										<td>Descuento(<?php echo $currency; ?>):</td>
+										<td style="text-align: right;"><?php echo number_format($sell->discount, 2, '.', ''); ?></td>
+									</tr>
+									<tr>
+										<td>Subtotal(<?php echo $currency; ?>):</td>
+										<td style="text-align: right;"><?php echo $subt; ?></td>
+									</tr>
+									<tr>
+										<td>IGV(18%)(<?php echo $currency; ?>):</td>
+										<td style="text-align: right;"><?php echo $igv; ?></td>
+									</tr>
+									<tr>
+										<td>Total a Pagar(<?php echo $currency; ?>):</td>
+										<td style="text-align: right;"><?php echo number_format($total1, 2, '.', ''); ?></td>
 									</tr>
 								</table>
 							</div>
@@ -145,7 +145,7 @@
 				        <label>
 							<div>
 								<a name="nueva" id="nueva" href="index.php?view=sell"><input type="button" name="nueva" id="nueva" value="Nueva"></a>
-								<!--<a target="_blank" href="ticket.php?id=<?php echo $sell->id; ?>"><input type="button" name="nueva" id="nueva" value="Tck Usb"></a>-->
+								<a target="_blank" href="ticket.php?id=<?php echo $sell->id; ?>"><input type="button" name="nueva" id="nueva" value="Tck Usb"></a>
 								<a target="_blank" href="fact.php?id=<?php echo $sell->id; ?>"><input type="button" name="nueva" id="nueva" value="A4 Usb"></a>
 								<input type="button" name="ticket" id="ticket" value="Tck Bth" onClick="sendToQuickPrinterChrome();">
 							</div>
@@ -156,16 +156,15 @@
 			<?php else:?>
 				501 Internal Error
 			<?php endif; ?>
-			<?php $sett = SettingData::getByAdmin($sell->admin_id);
-			$title = $sett->company;
-			$address = $sett->address;
-			$phone = $sett->phone;
-			$image = $sett->image;
-			$note = $sett->note;
-			$imp = $sett->tax; ?>
+			<?php $title = ConfigurationData::getByPreffix("company_name")->val;
+			$address = ConfigurationData::getByPreffix("address")->val;
+			$phone = ConfigurationData::getByPreffix("phone")->val;
+			$image = ConfigurationData::getByPreffix("report_image")->val;
+			$note = ConfigurationData::getByPreffix("note")->val;
+			$imp = ConfigurationData::getByPreffix("imp-val")->val; ?>
 			<script>
 			function sendToQuickPrinterChrome(){
-			    var text = "<big><?php echo $title; ?><br><?php echo $address; ?><br>Cel: <?php echo $phone; ?><br>Cliente: <?php echo $client->name." ".$client->lastname;?><br>RUC/DNI: <?php echo $client->ruc;?><br>Dir: <?php echo $client->address1;?><br>Fecha: <?php echo $sell->created_at;?><br>Cajero: <?php echo $user->name." ".$user->lastname;?><br><DLINE>Can Productos PUni(S/) PTot(S/)<br><?php foreach($operations as $operation){ $product  = $operation->getProduct();?><?php echo $operation->q ;?> <?php echo substr($product->modelo, 0,4)." ".substr($product->sex, 0,4)." ".substr(ColorData::getById($product->color_id)->name, 0,4);?>   <?php echo number_format($product->price_out,2,".",",") ;?>   <?php echo number_format($operation->q*$product->price_out,2,".",",");$total+=$operation->q*$product->price_out;?><br><?php }?><DLINE>Descuento: S/ <?php echo number_format($sell->discount,2,'.',','); ?><br>Subtotal : S/ <?php echo number_format($subt,2,".",","); ?><br>IGV(18%) : S/ <?php echo number_format($igv,2,".",","); ?><br>Total    : S/ <?php echo $total1; ?><br><big>Vuelva Pronto!<br>";
+			    var text = "<big><?php echo $title; ?><br><?php echo $address; ?><br>Cel: <?php echo $phone; ?><br>Cliente: <?php echo $client->name." ".$client->lastname;?><br>RUC/DNI: <?php echo $client->ruc;?><br>Dir: <?php echo $client->address;?><br>Fecha: <?php echo $sell->created_at;?><br>Cajero: <?php echo $user->name." ".$user->lastname;?><br><DLINE>Can Productos PUni(S/) PTot(S/)<br><?php foreach($operations as $operation){ $product  = $operation->getProduct();?><?php echo $operation->q ;?> <?php echo substr($product->modelo, 0,3)." ".substr($product->sex, 0,3)." ".substr(ColorData::getById($product->color_id)->name, 0,3);?>   <?php echo number_format($product->price_out,2,".",",") ;?>   <?php echo number_format($operation->q*$product->price_out,2,".",",");$total+=$operation->q*$product->price_out;?><br><?php }?><DLINE>Descuento: S/ <?php echo number_format($sell->discount,2,'.',','); ?><br>Subtotal : S/ <?php echo number_format($subt,2,".",","); ?><br>IGV(18%) : S/ <?php echo number_format($igv,2,".",","); ?><br>Total    : S/ <?php echo $total1; ?><br><big>Vuelva Pronto!<br>";
 
 			    var textEncoded = encodeURI(text);
 			    window.location.href="intent://"+textEncoded+"#Intent;scheme=quickprinter;package=pe.diegoveloper.printerserverapp;end;";

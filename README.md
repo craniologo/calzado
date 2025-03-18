@@ -1,2 +1,11 @@
-# calzado
-Sistema administrador de compras, ventas y control de stock de empresa de calzado.
+# Plantilla standar para sistemas
+Link: https://www.sergestec.com
+
+## Modulos
+
+- Usuarios
+- Productos
+- Configuraciones
+- y Mucho mas
+
+`Powered By Sergestec`

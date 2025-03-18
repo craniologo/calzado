@@ -11,11 +11,10 @@
             <?php if($user->image!=""){
               $url = "storage/profiles/".$user->image;
               if(file_exists($url)){
-                echo "<img src='$url' style='width:300px; height:300px; '>";
+                echo "<img src='$url' style='width:300px;'>";
                 }
-              }else{
-                echo "<img src='storage/profiles/default.jpg' style='width:300px; height:300px;'>";
-              } ?>
+              }
+            ?>
             <br><br>
             <input type="file" name="image" id="image" placeholder="">
           </div>
@@ -35,15 +34,15 @@
           <div class="col-md-3">
             <input type="text" name="username" value="<?php echo $user->username;?>" class="form-control" required id="username" placeholder="Nombre de usuario" readonly>
           </div>
-          <label for="inputEmail1" class="col-lg-1 control-label">Correo&nbsp;Electrónico*</label>
+          <label for="inputEmail1" class="col-lg-1 control-label">Correl Electróncio*</label>
           <div class="col-md-3">
-            <input type="text" name="email" value="<?php echo $user->email;?>" class="form-control" id="email" placeholder="Correo Electrónico">
+            <input type="text" name="email" value="<?php echo $user->email;?>" class="form-control" id="email" placeholder="Correo electrónico">
           </div>
         </div>
         <div class="form-group">
           <label for="inputEmail1" class="col-lg-2 control-label">Contraseña</label>
           <div class="col-md-3">
-            <input type="password" name="password" class="form-control" id="inputEmail1" placeholder="Contraseña">
+            <input type="password" name="password" class="form-control" id="inputEmail1" placeholder="Contraseña" readonly>
             <p class="help-block">La contraseña solo se modificara si escribes algo, en caso contrario no se modifica.</p>
           </div>
         </div>

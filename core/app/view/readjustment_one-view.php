@@ -1,7 +1,7 @@
 <section class="content">
 	<div class="row">
 		<div class="col-md-12">
-			<h2><i class="fa fa-adjust"></i> Resumen de Reajuste</h2>
+			<h2>Resumen de Reajuste</h2>
 			<a href="index.php?view=readjustments" class="btn btn-default"><i class="fa fa-arrow-left"></i> Regresar</a>
 			<br><br>
 			<?php if(isset($_GET["id"]) && $_GET["id"]!=""):?>

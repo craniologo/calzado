@@ -1,17 +1,9 @@
+<?php $clients = PersonData::getClients(); ?>
 <section class="content">
-	<?php $u=null;
- 	if(isset($_SESSION["user_id"]) &&$_SESSION["user_id"]!=""):
-  	$u = UserData::getById($_SESSION["user_id"]); ?>
-  	<?php $clients = PersonData::getClients(); ?>
 	<div class="row">
 		<div class="col-md-12">
-		<h2><i class="fa fa-money"></i> Liquidez <small>(solo productos vendidos)</small></h2>
-			<p>La Liquidez es el resultado de las operaciones de ingreso por Ventas menos los egresos por Compras y gastos pero solo de productos vendidos.</p>
-		    <ol class="breadcrumb">
-		      <li><a href="./?view=home"><i class="fa fa-dashboard"></i> Inicio</a></li>
-		      <li><i class="fa fa-money"></i> Finanzas</li>
-		      <li class="active"><i class="fa fa-money"></i> Liquidez</li>
-		    </ol>
+		<h2>Ganancia Real (Sólo artículos vendidos)</h2>
+		<h3>Precio de venta - Precio de compra = Ganancia real</h3>
 			<form>
 				<input type="hidden" name="view" value="gain">
 				<div class="row">
@@ -52,13 +44,8 @@
 			echo "var data=Array();";
 			echo "var total=Array();";
 			for($i=$sd;$i<=$ed;$i+=(60*60*24)){
-				if($u->id==1){
-				  	$operations = SellData::getGroupByDateOp(date("Y-m-d",$i),date("Y-m-d",$i),2);
-				  	$res = SellData::getGroupByDateOpC(date("Y-m-d",$i),date("Y-m-d",$i),2);
-				}else{
-				  	$operations = SellData::getGroupByDateOpByAdmin(date("Y-m-d",$i),date("Y-m-d",$i),2,$u->admin_id);
-				  	$res = SellData::getGroupByDateOpCByAdmin(date("Y-m-d",$i),date("Y-m-d",$i),2,$u->admin_id);
-				}
+			  $operations = SellData::getGroupByDateOp(date("Y-m-d",$i),date("Y-m-d",$i),2);
+			  $res = SellData::getGroupByDateOpC(date("Y-m-d",$i),date("Y-m-d",$i),2);
 			  //echo $res[0]->tot;
 			  //echo $operations[0]->t;
 			  $sr = $res[0]->tot!=null?$res[0]->tot:0;
@@ -96,18 +83,13 @@
 								$restotal=0;
 								$selltotal = 0;
 								for($i=$sd;$i<=$ed;$i+=(60*60*24)):
-									if($u->id==1){
-									  	$operations = SellData::getGroupByDateOp(date("Y-m-d",$i),date("Y-m-d",$i),2);
-									  	$res = SellData::getGroupByDateOpC(date("Y-m-d",$i),date("Y-m-d",$i),2);
-									}else{
-									  	$operations = SellData::getGroupByDateOpByAdmin(date("Y-m-d",$i),date("Y-m-d",$i),2,$u->admin_id);
-									  	$res = SellData::getGroupByDateOpCByAdmin(date("Y-m-d",$i),date("Y-m-d",$i),2,$u->admin_id);
-									} ?>
+								$operations = SellData::getGroupByDateOp(date("Y-m-d",$i),date("Y-m-d",$i),2);
+								$res = SellData::getGroupByDateOpC(date("Y-m-d",$i),date("Y-m-d",$i),2); ?>
 								<?php if(count($operations)>0):?>
 								<?php // foreach($operations as $operation):?>
 								<tr>
 									<td style="text-align: center;"><?php echo $number; ?></td><?php $number++;?>
-									<td><b><?php echo date("Y-m-d",$i); ?></b></td>
+									<td style="text-align: center;"><?php echo date("Y-m-d",$i); ?></td>
 									<td style="text-align: right;">S/ <?php echo number_format($operations[0]->t,2,'.',','); ?></td>
 									<td style="text-align: right;">S/ <?php echo number_format($res[0]->tot,2,'.',','); ?></td>
 									<td style="text-align: right;">S/ <?php echo number_format($operations[0]->t-($res[0]->tot),2,'.',','); ?></td>
@@ -124,7 +106,7 @@
 								<?php endfor;?>
 								<tr>
 									<td></td>
-									<td><b>Total</b></td>
+									<td style="text-align: center;"><b>Total</b></td>
 									<td style="text-align: right;"><b>S/ <?php echo number_format($selltotal,2,'.',','); ?></b></td>
 									<td style="text-align: right;"><b>S/ <?php echo number_format($restotal,2,'.',','); ?></b></td>
 									<td style="text-align: right;"><b>S/ <?php echo number_format($selltotal-($restotal),2,'.',','); ?></b></td>
@@ -143,5 +125,4 @@
 		<?php endif; ?>
 		</div>
 	</div>
-	<?php endif; ?>
 </section>

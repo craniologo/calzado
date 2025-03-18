@@ -1,7 +1,5 @@
 <section class="content">
-  <?php $u=null;
-  if(isset($_SESSION["user_id"]) &&$_SESSION["user_id"]!=""):
-  $u = UserData::getById($_SESSION["user_id"]); ?>
+  <?php $stocks = StockData::getAll(); ?>
   <div class="row">
   	<div class="col-md-12">
       <h2><i class="fa fa-exchange"></i> Traspasar Productos</h2>
@@ -14,7 +12,7 @@
             <div class="col-md-6">
               <select name="stock_id" class="form-control" required>
                 <option value="">-- NINGUNO --</option>
-                <?php foreach(StockData::getAllByAdmin($u->admin_id) as $client):?>
+                <?php foreach($stocks as $client):?>
                 <option value="<?php echo $client->id;?>"><?php echo $client->name;?></option>
                 <?php endforeach;?>
               </select>
@@ -30,5 +28,4 @@
       </div>
   	</div>
   </div>
-  <?php endif; ?>
 </section>

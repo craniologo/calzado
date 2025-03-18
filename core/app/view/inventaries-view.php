@@ -1,22 +1,13 @@
 <section class="content">
-  <?php $u=null;
-  if(isset($_SESSION["user_id"]) &&$_SESSION["user_id"]!=""):
-  $u = UserData::getById($_SESSION["user_id"]); ?>
   <div class="row">
   	<div class="col-md-12"><!-- Single button -->
   		<h2><i class="glyphicon glyphicon-stats"></i> Inventario Global</h2>
         <ol class="breadcrumb">
-          <li><a href="./?view=home"><i class="fa fa-dashboard"></i> Inicio</a></li>
-          <li><i class="fa fa-cube"></i> Stock</li>
-          <li class="active"><i class="fa fa-cubes"></i> Inventario Global</li>
+          <li><a href="./?view=home">Inicio</a></li>
+          <li><a href="./?view=stocks">Sucursales</a></li>
         </ol>
-      <?php if($u->id==1){
-        $products = ProductData::getAll();
-        $sucursales = StockData::getAll();
-      }else{
-        $products = ProductData::getAllByAdmin($u->admin_id);
-        $sucursales = StockData::getAllByAdmin($u->admin_id);
-      }
+      <?php $products = ProductData::getAll();
+      $sucursales = StockData::getAll();
       if(count($products)>0){ ?>
       <div class="box">
         <div class="box-body no-padding">
@@ -26,10 +17,10 @@
               	<thead>
                   <th style="text-align: center; width: 30px;">N°</th>
               		<th style="text-align: center; width: 100px;">Codigo</th>
-              		<th style="text-align: center;">Producto</th>
+              		<th style="text-align: center;">Nombre</th>
                   <th style="text-align: center;">Talla</th>
-                  <th style="text-align: center;">Total</th>
-                  <th style="text-align: center;">Ubicación</th>
+                  <th style="text-align: center;">Stock Total Real</th>
+                  <th style="text-align: center;">Ubi-Suc-Principal</th>
                   <?php foreach($sucursales as $suc):?>
               		<th style="text-align: center;"><?php echo $suc->name; ?></th>
                   <?php endforeach; ?>
@@ -41,16 +32,19 @@
                   <td style="text-align: center;"><?php echo $number; ?></td> <?php $number++; ?><!--var incremen-->
               		<td style="text-align: right;"><?php echo $product->barcode; ?></td>
               		<td><?php echo $product->modelo; ?></td>
-                  <td><?php $size = Serie_sizeData::getById($product->size_id); echo "Talla ".$size->size; ?></td>
-                  <td style="text-align: right;"><?php echo $stk_true; ?></td>
+                  <td style="text-align: center;"><?php $size = Serie_sizeData::getById($product->size_id); echo "Talla ".$size->size; ?></td>
+                  <td style="text-align: center;"><?php echo $stk_true; ?></td>
                   <td><?php echo $product->ubication; ?></td>
                   <?php foreach($sucursales as $suc):?>
-              		<td><?php $q=OperationData::getQByStock($product->id,$suc->id);
+              		<td style="text-align: center;">
+              			<?php $q=OperationData::getQByStock($product->id,$suc->id);
                     if($q<0){
                       echo "Se vendió ".$q*(-1)." prod. de Sucursal Principal";
                     }else{
                       echo "Queda ".$q." prod.";
-                    }; ?></td>
+                    }; ?>
+                    
+              		</td>
                   <?php endforeach; ?>
               	</tr>
               	<?php endforeach;?>
@@ -68,5 +62,4 @@
       <br>
   	</div>
   </div>
-  <?php endif; ?>
 </section>

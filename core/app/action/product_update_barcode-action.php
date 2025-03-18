@@ -8,7 +8,7 @@
     $product->price_in = $_POST["price_in"];
     $product->price_out = $_POST["price_out"];
     $product->ubication = $_POST['ubication'];
-
+    
 
     if(isset($_FILES["image"])){
   		$image = new Upload($_FILES["image"]);
@@ -21,7 +21,7 @@
   		}
   	}
     $product->update_by_barcode();
-
+    
   	setcookie("prdupd","true");
   	print "<script>window.location='index.php?view=products';</script>";
   }

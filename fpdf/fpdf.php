@@ -1052,7 +1052,7 @@ function _dochecks()
 		$this->Error('mbstring overloading must be disabled');
 	// Ensure runtime magic quotes are disabled
 	if(ini_set('magic_quotes_runtime', 0))
-		@set_magic_quotes_runtime(0);
+	@set_magic_quotes_runtime(0);
 }
 
 function _checkoutput()

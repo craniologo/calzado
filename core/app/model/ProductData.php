@@ -15,22 +15,21 @@ class ProductData {
 		$this->price_in = "";
 		$this->price_out = "";
 		$this->ubication = "";
-		$this->admin_id = "";
-		$this->created_at = "NOW()";
+		$this->user_id = "";
+		$this->created_at = "(date_sub(NOW(),interval 5 hour))";
 	}
 
 	public function getColor(){ return ColorData::getById($this->color_id);}
-	public function getAdmin(){ return UserData::getById($this->admin_id);}
 
 	public function add(){
-		$sql = "insert into product (modelo,sex,color_id,brand_id,size_id,qty,stock_min,price_in,price_out,ubication,admin_id,created_at)";
-		$sql .= "value (\"$this->modelo\",\"$this->sex\",\"$this->color_id\",\"$this->brand_id\",\"$this->size_id\",\"$this->qty\",\"$this->stock_min\",\"$this->price_in\",\"$this->price_out\",\"$this->ubication\",\"$this->admin_id\",$this->created_at)";
+		$sql = "insert into product (modelo,sex,color_id,brand_id,size_id,qty,stock_min,price_in,price_out,ubication,user_id,created_at)";
+		$sql .= "value (\"$this->modelo\",\"$this->sex\",\"$this->color_id\",\"$this->brand_id\",\"$this->size_id\",\"$this->qty\",\"$this->stock_min\",\"$this->price_in\",\"$this->price_out\",\"$this->ubication\",\"$this->user_id\",$this->created_at)";
 		Executor::doit($sql);
 	}
 
 	public function add_with_image(){
-		$sql = "insert into product (image,modelo,sex,color_id,brand_id,size_id,qty,stock_min,price_in,price_out,ubication,admin_id,created_at)";
-		$sql .= "value (\"$this->image\",\"$this->modelo\",\"$this->sex\",\"$this->color_id\",\"$this->brand_id\",\"$this->size_id\",\"$this->qty\",\"$this->stock_min\",\"$this->price_in\",\"$this->price_out\",\"$this->ubication\",\"$this->admin_id\",$this->created_at)";
+		$sql = "insert into product (image,modelo,sex,color_id,brand_id,size_id,qty,stock_min,price_in,price_out,ubication,user_id,created_at)";
+		$sql .= "value (\"$this->image\",\"$this->modelo\",\"$this->sex\",\"$this->color_id\",\"$this->brand_id\",\"$this->size_id\",\"$this->qty\",\"$this->stock_min\",\"$this->price_in\",\"$this->price_out\",\"$this->ubication\",\"$this->user_id\",$this->created_at)";
 		Executor::doit($sql);
 	}
 
@@ -84,8 +83,6 @@ class ProductData {
 			$data->price_in = $r['price_in'];
 			$data->price_out = $r['price_out'];
 			$data->ubication = $r['ubication'];
-			$data->admin_id = $r['admin_id'];
-			$data->created_at = $r['created_at'];
 			$found = $data;
 			break;
 		}
@@ -111,8 +108,6 @@ class ProductData {
 			$data->price_in = $r['price_in'];
 			$data->price_out = $r['price_out'];
 			$data->ubication = $r['ubication'];
-			$data->admin_id = $r['admin_id'];
-			$data->created_at = $r['created_at'];
 			$found = $data;
 			break;
 		}
@@ -138,8 +133,6 @@ class ProductData {
 			$data->price_in = $r['price_in'];
 			$data->price_out = $r['price_out'];
 			$data->ubication = $r['ubication'];
-			$data->admin_id = $r['admin_id'];
-			$data->created_at = $r['created_at'];
 			$found = $data;
 			break;
 		}
@@ -165,8 +158,6 @@ class ProductData {
 			$data->price_in = $r['price_in'];
 			$data->price_out = $r['price_out'];
 			$data->ubication = $r['ubication'];
-			$data->admin_id = $r['admin_id'];
-			$data->created_at = $r['created_at'];
 			$found = $data;
 			break;
 		}
@@ -192,7 +183,6 @@ class ProductData {
 			$array[$cnt]->price_in = $r['price_in'];
 			$array[$cnt]->price_out = $r['price_out'];
 			$array[$cnt]->ubication = $r['ubication'];
-			$array[$cnt]->admin_id = $r['admin_id'];
 			$array[$cnt]->created_at = $r['created_at'];
 			$cnt++;
 		}
@@ -218,21 +208,20 @@ public static function getAllByPrdId($id){
 			$array[$cnt]->price_in = $r['price_in'];
 			$array[$cnt]->price_out = $r['price_out'];
 			$array[$cnt]->ubication = $r['ubication'];
-			$array[$cnt]->admin_id = $r['admin_id'];
 			$array[$cnt]->created_at = $r['created_at'];
 			$cnt++;
 		}
 		return $array;
 	}
 
-	public static function getAll(){
-		$sql = "select * from ".self::$tablename." order by id asc";
+	public static function getByLast(){
+		$sql = "select * from ".self::$tablename." order by id desc limit 1";
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new ProductData());
 	}
 
-	public static function getAllByAdmin($id){
-		$sql = "select * from ".self::$tablename." where admin_id=$id order by created_at desc";
+	public static function getAll(){
+		$sql = "select * from ".self::$tablename." order by id asc";
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new ProductData());
 	}
@@ -243,14 +232,8 @@ public static function getAllByPrdId($id){
 		return Model::many($query[0],new ProductData());
 	}
 
-	public static function getLikeByAdmin($q,$id){
-		$sql = "select * from ".self::$tablename." where (barcode like '%$q%' and admin_id=$id) or (modelo like '%$q%' and admin_id=$id)";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new ProductData());
-	}
-
 	public static function getAllByListIdAll($id){
-		$sql = "select * from ".self::$tablename." where admin_id=$id";
+		$sql = "select * from ".self::$tablename." where user_id=$id";
 		$query = Executor::doit($sql);
 		$array = array();
 		$cnt = 0;
@@ -268,7 +251,6 @@ public static function getAllByPrdId($id){
 			$array[$cnt]->price_in = $r['price_in'];
 			$array[$cnt]->price_out = $r['price_out'];
 			$array[$cnt]->ubication = $r['ubication'];
-			$array[$cnt]->admin_id = $r['admin_id'];
 			$array[$cnt]->created_at = $r['created_at'];
 			$cnt++;
 		}
@@ -276,13 +258,7 @@ public static function getAllByPrdId($id){
 	}
 
 	public static function getRes(){
-		$sql = "select * from ".self::$tablename." where admin_id=1 order by size_3 desc";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new ProductData());
-	}
-
-	public static function getLastByAdmin($id){
-		$sql = "select * from ".self::$tablename." where admin_id=$id order by id desc limit 1";
+		$sql = "select * from ".self::$tablename." where user_id=1 order by size_3 desc";
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new ProductData());
 	}

@@ -2,7 +2,6 @@
     include 'barcode.php';
 
     if(count($_POST)>0){
-        $admin = UserData::getById($_SESSION["user_id"]);
 
         $sizes = $_POST["value"];
         $id = $_POST["id"];
@@ -20,7 +19,7 @@
                 $product->price_in = $_POST['price_in'];
                 $product->price_out = $_POST['price_out'];
                 $product->ubication = $_POST['ubication'];
-                $product->admin_id = $admin->admin_id;
+                $product->user_id = $_SESSION["user_id"];
 
                 if(isset($_FILES["image"])){
                 $image = new Upload($_FILES["image"]);
@@ -40,7 +39,7 @@
 
                 }
 
-                $prods = ProductData::getLastByAdmin($admin->admin_id);
+                $prods = ProductData::getByLast();
                     $last = 1;
                 if(isset($prods)==""){
                     $last = $last;
@@ -52,14 +51,13 @@
 
                 $op = new OperationData();
                 $op->product_id = $last;
-                $op->stock_id = StockData::getPrincipalByAdmin($admin->admin_id)->id;
+                $op->stock_id = StockData::getPrincipal()->id;
                 $op->operation_type_id=OperationTypeData::getByName("entrada")->id;
                 $op->q = $sizes[$i];
                 $op->size_id = $id[$i];
                 $op->price_in = "NULL";
                 $op->price_out = "NULL";
                 $op->sell_id="NULL";
-                $op->admin_id = $admin->admin_id;
                 $op->add();
 
                 $product = ProductData::getById($last);

@@ -1,7 +1,4 @@
 <section class="content">
-  <?php $u=null;
-  if(isset($_SESSION["user_id"]) &&$_SESSION["user_id"]!=""):
-  $u = UserData::getById($_SESSION["user_id"]); ?>
   <div class="row">
   	<div class="col-md-12">
     	<h2><i class="fa fa-apple"></i> Nuevo Producto</h2>
@@ -10,10 +7,10 @@
       <div class="form-horizontal" id="size">
         <label for="inputEmail1" class="col-lg-2 control-label">Series/Tallas*</label>
         <div class="col-md-2">
-          <select name="serie_id" id="serie_id" class="form-control" required>
-            <option value="">-- SELECCIONAR --</option>
+          <select name="serie_id" id="serie_id" class="form-control" required="">
+            <option value="">--SELECCIONAR--</option>
             <?php foreach(Serie_sizeData::getAllSerie() as $ser):?>
-            <option value="<?php echo $ser->serie_id;?>" <?php if(isset($_GET["serie_id"]) && $_GET["serie_id"]==$ser->serie_id){ echo "selected"; } ?> >Serie <?php echo $ser->serie_id;?></option>
+            <option value="<?php echo $ser->serie_id;?>">Serie <?php echo $ser->serie_id;?></option>
             <?php endforeach;?>
           </select>
         </div>
@@ -36,7 +33,7 @@
       <form class="form-horizontal" method="post" enctype="multipart/form-data" name="product_add" id="product_add" action="index.php?action=product_add" role="form">
         <div class="form-group">
           <?php if(isset($_GET["serie_id"]) &&$_GET["serie_id"]!=""):
-          $series = Serie_sizeData::getAllSerieAndAdmin($_GET['serie_id'],$u->admin_id); ?>
+          $series = Serie_sizeData::getAllSerieId($_GET['serie_id']); ?>
           <div class="col-lg-offset-1 col-lg-10">
             <div class="box">
                 <div class="box-body">
@@ -55,7 +52,7 @@
           </div><?php endif;?>
         </div>
         <div class="form-group">
-          <label for="inputEmail1" class="col-lg-2 control-label">Foto JPG (400x400px)</label>
+          <label for="inputEmail1" class="col-lg-2 control-label">Imagen (ancho 200px)</label>
           <div class="col-md-6">
             <input type="file" name="image" id="image" onchange="ValidarImagen(this);" placeholder="">
           </div>
@@ -70,7 +67,7 @@
             <div class="col-md-8">
               <select name="brand_id" class="form-control" required>
                 <option> -- SELECCIONAR -- </option>
-                <?php $brands = BrandData::getAllByAdmin($u->admin_id);
+                <?php $brands = BrandData::getAll();
                 foreach($brands as $brand):?>
                 <option value="<?php echo $brand->id;?>"><?php echo $brand->name;?></option>
                 <?php endforeach;?>
@@ -95,7 +92,7 @@
             <div class="col-md-8">
               <select name="color_id" class="form-control" required>
                 <option> -- SELECCIONAR -- </option>
-                <?php $cols = ColorData::getAllByAdmin($u->admin_id);
+                <?php $cols = ColorData::getAll();
                 foreach($cols as $col):?>
                 <option value="<?php echo $col->id;?>"><?php echo $col->name;?></option>
                 <?php endforeach;?>
@@ -134,7 +131,6 @@
       </form>
   	</div>
   </div>
-  <?php endif; ?>
 </section>
 
 <script type="text/javascript">

@@ -5,37 +5,34 @@ class SellData {
 	public function __construct(){
 		$this->id = "";
 		$this->ref_id=NULL;
-		$this->sell_from_id = "";
 		$this->person_id = "";
-		$this->stock_id = "";
+		$this->user_id = "";
 		$this->operation_type_id = "";
 		$this->box_id = "";
 		$this->total = "";
 		$this->cash = "";
 		$this->discount = "";
-		$this->user_id = "";
-		$this->admin_id = "";
-		$this->created = "NOW()";
-		$this->created_at = "NOW()";
+		$this->stock_id = "";
+		$this->created_at = "(date_sub(NOW(),interval 5 hour))";
+		$this->created = "(date_sub(NOW(),interval 5 hour))";
 	}
 
 	public function getRuc(){ return PersonData::getById($this->no);}
 	public function getPerson(){ return PersonData::getById($this->person_id);}
 	public function getUser(){ return UserData::getById($this->user_id);}
-	public function getAdmin(){ return UserData::getById($this->admin_id);}
 	public function getP(){ return PData::getById($this->p_id);}
 	public function getD(){ return DData::getById($this->d_id);}
 	public function getStockFrom(){ return StockData::getById($this->stock_from_id);}
 	public function getStockTo(){ return StockData::getById($this->stock_to_id);}
 
 	public function add(){
-		$sql = "insert into ".self::$tablename." (ref_id,person_id,stock_id,stock_to_id,iva,p_id,d_id,pay,total,cash,discount,user_id,admin_id,created_at,created) ";
-		$sql .= "value ($this->ref_id,$this->person_id,$this->stock_id,$this->stock_to_id,$this->iva,$this->p_id,$this->d_id,$this->pay,$this->total,$this->cash,$this->discount,$this->user_id,$this->admin_id,$this->created_at,$this->created)";
+		$sql = "insert into ".self::$tablename." (ref_id,person_id,stock_id,stock_to_id,iva,p_id,d_id,pay,total,cash,discount,user_id,created_at,created) ";
+		$sql .= "value ($this->ref_id,$this->person_id,$this->stock_id,$this->stock_to_id,$this->iva,$this->p_id,$this->d_id,$this->pay,$this->total,$this->cash,$this->discount,$this->user_id,$this->created_at,$this->created)";
 		return Executor::doit($sql);
 	}
 	public function add_traspase(){
-		$sql = "insert into ".self::$tablename." (ref_id,stock_to_id,stock_from_id,operation_type_id,iva,p_id,d_id,total,discount,user_id,admin_id,created,created_at) ";
-		$sql .= "value ($this->ref_id,$this->stock_to_id,$this->stock_from_id,6,$this->iva,$this->p_id,$this->d_id,$this->total,$this->discount,$this->user_id,$this->admin_id,$this->created,$this->created_at)";
+		$sql = "insert into ".self::$tablename." (ref_id,stock_to_id,stock_from_id,operation_type_id,iva,p_id,d_id,total,discount,user_id,created_at,created) ";
+		$sql .= "value ($this->ref_id,$this->stock_to_id,$this->stock_from_id,6,$this->iva,$this->p_id,$this->d_id,$this->total,$this->discount,$this->user_id,$this->created_at,$this->created)";
 		return Executor::doit($sql);
 	}
 
@@ -58,26 +55,26 @@ class SellData {
 	}
 
 	public function add_re(){
-		$sql = "insert into ".self::$tablename."(ref_id,user_id,operation_type_id,total,created_at,created) ";
-		$sql .= "value ($this->ref_id,$this->user_id,1,$this->total,$this->created_at,$this->created)";
+		$sql = "insert into ".self::$tablename."(ref_id,user_id,operation_type_id,total,stock_id,created_at,created) ";
+		$sql .= "value ($this->ref_id,$this->user_id,1,$this->total,$this->stock_id,$this->created_at,$this->created)";
 		return Executor::doit($sql);
 	}
 
 	public function add_readj(){
-		$sql = "insert into ".self::$tablename."(ref_id,operation_type_id,total,user_id,admin_id,created,created_at) ";
-		$sql .= "value ($this->ref_id,7,$this->total,$this->user_id,$this->admin_id,$this->created,$this->created_at)";
+		$sql = "insert into ".self::$tablename."(ref_id,user_id,operation_type_id,total,created_at,created) ";
+		$sql .= "value ($this->ref_id,$this->user_id,7,$this->total,$this->created_at,$this->created)";
 		return Executor::doit($sql);
 	}
 
 	public function add_re_with_client(){
-		$sql = "insert into ".self::$tablename." (ref_id,person_id,operation_type_id,total,user_id,admin_id,created,created_at) ";
-		$sql .= "value ($this->ref_id,$this->person_id,1,\"$this->total\",$this->user_id,$this->admin_id,$this->created,$this->created_at)";
+		$sql = "insert into ".self::$tablename." (ref_id,person_id,user_id,operation_type_id,total,stock_id,created_at,created) ";
+		$sql .= "value ($this->ref_id,$this->person_id,$this->user_id,1,\"$this->total\",$this->stock_id,$this->created_at,$this->created)";
 		return Executor::doit($sql);
 	}
 
 	public function add_with_client(){
-		$sql = "insert into ".self::$tablename." (ref_id,person_id,stock_id,pay,total,cash,discount,user_id,admin_id,created,created_at) ";
-		$sql .= "value ($this->ref_id,$this->person_id,$this->stock_id,\"$this->pay\",\"$this->total\",\"$this->cash\",\"$this->discount\",$this->user_id,$this->admin_id,$this->created,$this->created_at)";
+		$sql = "insert into ".self::$tablename." (ref_id,person_id,user_id,stock_id,pay,total,cash,discount,created_at,created) ";
+		$sql .= "value ($this->ref_id,$this->person_id,$this->user_id,$this->stock_id,\"$this->pay\",\"$this->total\",\"$this->cash\",\"$this->discount\",$this->created_at,$this->created)";
 		return Executor::doit($sql);
 	}
 
@@ -95,7 +92,8 @@ class SellData {
 		$sql = "update ".self::$tablename." set stock_to_id=$this->stock_to_id,p_id=$this->p_id,d_id=$this->d_id,iva=$this->iva,total=$this->total,discount=$this->discount,cash=$this->cash,is_draft=0 where id=$this->id";
 		Executor::doit($sql);
 	}
-		
+	
+	
 	public function update_box(){
 		$sql = "update ".self::$tablename." set box_id=$this->box_id where id=$this->id";
 		Executor::doit($sql);
@@ -122,10 +120,12 @@ class SellData {
 		return Model::one($query[0],new SellData());
 	}
 
+
 	public function cancel(){
 		$sql = "update ".self::$tablename." set d_id=3,p_id=3 where id=$this->id";
 		Executor::doit($sql);
 	}
+
 
 	public static function getCotizations(){
 		$sql = "select * from ".self::$tablename." where operation_type_id=2 and p_id=2 and d_id=2 and is_draft=1 order by created_at desc";
@@ -140,7 +140,7 @@ class SellData {
 	}
 
 	public static function getSells(){
-		$sql = "select * from ".self::$tablename." where operation_type_id=2 order by created_at desc";
+		$sql = "select * from ".self::$tablename." where operation_type_id=2 order by created_at asc";
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new SellData());
 	}
@@ -151,17 +151,13 @@ class SellData {
 		return Model::many($query[0],new SellData());
 	}
 
-	public static function getSellsByUser($id){
-		$sql = "select * from ".self::$tablename." where operation_type_id=2 and is_draft=0 and user_id=$id order by created_at desc";
+
+	public static function getSellsByUserId($id){
+		$sql = "select * from ".self::$tablename." where operation_type_id=2 and is_draft=0 and user_id=$id order by created_at asc";
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new SellData());
 	}
 
-	public static function getSellsByAdmin($id){
-		$sql = "select * from ".self::$tablename." where operation_type_id=2 and is_draft=0 and admin_id=$id order by created_at desc";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new SellData());
-	}
 
 	public static function getCredits(){
 		$sql = "select * from ".self::$tablename." where operation_type_id=2 and p_id=4 and is_draft=0 order by created_at desc";
@@ -187,6 +183,7 @@ class SellData {
 		return Model::many($query[0],new SellData());
 	}
 
+
 	public static function getSellsToDeliver(){
 		$sql = "select * from ".self::$tablename." where operation_type_id=2 and d_id=2 and is_draft=0 order by created_at desc";
 		$query = Executor::doit($sql);
@@ -203,6 +200,7 @@ class SellData {
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new SellData());
 	}
+
 
 	public static function getSellsToDeliverByClient($id){
 		$sql = "select * from ".self::$tablename." where operation_type_id=2 and d_id=2 and is_draft=0 and person_id=$id order by created_at desc";
@@ -233,14 +231,9 @@ class SellData {
 		return Model::many($query[0],new SellData());
 	}
 
+	
 	public static function getSellsUnBoxed(){
 		$sql = "select * from ".self::$tablename." where operation_type_id=2 and box_id is NULL order by created_at desc";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new SellData());
-	}
-
-	public static function getSellsUnBoxedByAdmin($id){
-		$sql = "select * from ".self::$tablename." where admin_id=$id and operation_type_id=2 and box_id is NULL order by created_at desc";
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new SellData());
 	}
@@ -253,12 +246,6 @@ class SellData {
 
 	public static function getRes(){
 		$sql = "select * from ".self::$tablename." where operation_type_id=1 order by created_at desc";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new SellData());
-	}
-
-	public static function getResByAdmin($id){
-		$sql = "select * from ".self::$tablename." where admin_id=$id and operation_type_id=1 order by created_at desc";
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new SellData());
 	}
@@ -338,13 +325,13 @@ class SellData {
 	}
 
 	public static function getAllByDateOpByUserId($user,$start,$end,$op){
-	  	$sql = "select * from ".self::$tablename." where date(created_at) >= \"$start\" and date(created_at) <= \"$end\" and operation_type_id=$op and is_draft=0 and p_id=1 and d_id=1 and user_id=$user order by created_at desc";
+	  $sql = "select * from ".self::$tablename." where date(created_at) >= \"$start\" and date(created_at) <= \"$end\" and operation_type_id=$op and is_draft=0 and p_id=1 and d_id=1 and user_id=$user order by created_at desc";
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new SellData());
 	}
 
 	public static function getGroupByDateOp2($start,$end,$op){
-  		$sql = "select id,discount,sum(total) as tot,discount,sum(total-discount) as t,count(*) as c from ".self::$tablename." where date(created_at) >= \"$start\" and date(created_at) <= \"$end\" and operation_type_id=2 group by id";
+  $sql = "select id,discount,sum(total) as tot,discount,sum(total-discount) as t,count(*) as c from ".self::$tablename." where date(created_at) >= \"$start\" and date(created_at) <= \"$end\" and operation_type_id=2 group by id";
 
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new SellData());
@@ -360,6 +347,7 @@ class SellData {
  		$sql = "select * from ".self::$tablename." where date(created_at) >= \"$start\" and date(created_at) <= \"$end\" and person_id=$clientid  and operation_type_id=$op order by created_at desc";
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new SellData());
+
 	}
 
 		public static function getAllByDateBCOp1($clientid,$start,$end,$op){
@@ -373,19 +361,20 @@ class SellData {
  		$sql = "select * from ".self::$tablename." where date(created_at) >= \"$start\" and date(created_at) <= \"$end\" and person_id=$clientid  and operation_type_id=$op and is_draft=0 and p_id=1 and d_id=1 and user_id=$user order by created_at desc";
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new SellData());
+
 	}
 
 	public static function getGroupByDateOp($start,$end,$op){
-  		$sql = "select id,sum(total) as tot,discount,sum(total) as t,count(*) as c from ".self::$tablename." where date(created_at) >= \"$start\" and date(created_at) <= \"$end\" and operation_type_id=$op";
+  $sql = "select id,sum(total) as tot,discount,sum(total-discount) as t,count(*) as c from ".self::$tablename." where date(created_at) >= \"$start\" and date(created_at) <= \"$end\" and operation_type_id=$op";
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new SellData());
 	}
 
-	public static function getGroupByDateOpByAdmin($start,$end,$op,$id){
-  		$sql = "select id,sum(total) as tot,discount,sum(total) as t,count(*) as c from ".self::$tablename." where date(created_at) >= \"$start\" and date(created_at) <= \"$end\" and operation_type_id=$op and admin_id=$id";
+	/*public static function getGroupByDateOp($start,$end,$op){
+        $sql = "select total,id,sum(total) as tot,discount,sum(total-discount) as t,count(*) as c from ".self::$tablename." where date(created_at) >= \"$start\" and date(created_at) <= \"$end\" and operation_type_id=$op group by id";
 		$query = Executor::doit($sql);
 		return Model::many($query[0],new SellData());
-	}
+	}*/
 
 	public static function getGroupByDateOpC($start,$end,$op){
   		$sql = "select id,sum(pay) as tot,discount,sum(pay) as t,count(*) as c from ".self::$tablename." where date(created_at) >= \"$start\" and date(created_at) <= \"$end\" and operation_type_id=$op";
@@ -393,34 +382,32 @@ class SellData {
 		return Model::many($query[0],new SellData());
 	}
 
-	public static function getGroupByDateOpCByAdmin($start,$end,$op,$id){
-  		$sql = "select id,sum(pay) as tot,discount,sum(pay) as t,count(*) as c from ".self::$tablename." where date(created_at) >= \"$start\" and date(created_at) <= \"$end\" and operation_type_id=$op and admin_id=$id";
+	public static function getAllByLastRe(){
+		$sql = "select * from ".self::$tablename." where operation_type_id=1 order by id desc limit 1";
 		$query = Executor::doit($sql);
-		return Model::many($query[0],new SellData());
+		return Model::many($query[0],new SellData
+		());
 	}
 
-	public static function getLastReByAdmin($id){
-		$sql = "select * from ".self::$tablename." where operation_type_id=1 and admin_id=$id order by id desc limit 1";
+	public static function getAllByLastReadj(){
+		$sql = "select * from ".self::$tablename." where operation_type_id=7 order by id desc limit 1";
 		$query = Executor::doit($sql);
-		return Model::many($query[0],new SellData());
+		return Model::many($query[0],new SellData
+		());
 	}
 
-	public static function getLastReadjbyAdmin($id){
-		$sql = "select * from ".self::$tablename." where operation_type_id=7 and admin_id=$id order by id desc limit 1";
+	public static function getAllByLastSell(){
+		$sql = "select * from ".self::$tablename." where operation_type_id=2 order by id desc limit 1";
 		$query = Executor::doit($sql);
-		return Model::many($query[0],new SellData());
-	}
-
-	public static function getLastSellByAdmin($id){
-		$sql = "select * from ".self::$tablename." where operation_type_id=2 and admin_id=$id order by id desc limit 1";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new SellData());
+		return Model::many($query[0],new SellData
+		());
 	}
 
 	public static function getAllByLastTraspase(){
 		$sql = "select * from ".self::$tablename." where operation_type_id=6 order by id desc limit 1";
 		$query = Executor::doit($sql);
-		return Model::many($query[0],new SellData());
+		return Model::many($query[0],new SellData
+		());
 	}
 
 }

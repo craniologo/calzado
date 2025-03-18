@@ -5,18 +5,16 @@ if(isset($_SESSION["readjust"])){
 
 $process = true;
 
-$admin = UserData::getById($_SESSION["user_id"]);
-
 //////////////////////////////////
 		if($process==true){
 			$sell = new SellData();
 			$sell->ref_id = $_POST["ref_id"];
-			$sell->user_id = $admin->id;
-			$sell->admin_id = $admin->admin_id;
+			$sell->user_id = $_SESSION["user_id"];
 			$sell->total = 0;
  			$s = $sell->add_readj();
 
 		foreach($cart as  $c){
+
 
 			$op = new OperationData();
 			$op->product_id = $c["product_id"] ;
@@ -27,7 +25,6 @@ $admin = UserData::getById($_SESSION["user_id"]);
 			$op->price_in = "NULL";
         	$op->price_out = "NULL";
 			$op->sell_id=$s[1];
-			$op->admin_id = $admin->admin_id;
 			$op->add();
 
 		}
