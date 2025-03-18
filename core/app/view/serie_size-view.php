@@ -23,7 +23,7 @@
 			            <input type="text" name="size" class="form-control"  placeholder="Escriba la talla" required="" >
 			        </div>
 		            <div class="col-md-4">
-		              <button type="submit" class="btn btn-default"><i class="btn-default"></i> Agregar Talla</button>
+		              <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Agregar Talla</button>
 		            </div>
 		        </form>
 		    </div>
@@ -39,7 +39,7 @@
 							<tr>
 								<th style="text-align: center;"><?php echo "Serie ".$serie->serie_id; ?></th>
 								<?php $sizes = Serie_sizeData::getAllSerieId($serie->serie_id); foreach ($sizes as $size) {; ?>
-								<td style="text-align: center;"><?php echo $size->size; ?><a class="btn btn-default btn-xs" onclick="return confirm('¿Está seguro de eliminar?')" href="index.php?action=size_del&id=<?php echo $size->id; ?>">x</a> </td>
+								<td style="text-align: center;"><?php echo $size->size; ?><a class="btn btn-danger btn-xs" onclick="return confirm('¿Está seguro de eliminar?')" href="index.php?action=size_del&id=<?php echo $size->id; ?>">x</a> </td>
 								<?php }; ?>
 							</tr>
 							<?php }; ?>

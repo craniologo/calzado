@@ -28,9 +28,9 @@
   <div class="col-md-12">
     <center><h1>SISTEMA DE ZAPATERÍA</h1></center>
     <h2><i class="fa fa-building"></i> Sucursal Principal: <?php echo StockData::getPrincipal()->name;  ?></h2>
-  <a href="./?view=product_new" class="btn btn-default">Nuevo Producto</a>
-  <a href="./?view=inventary&stock=<?php echo StockData::getPrincipal()->id; ?>" class="btn btn-default">Inventario Principal</a>
-  <a href="./?view=spends" class="btn btn-default">Gastos Adicionales</a>
+  <a href="./?view=product_new" class="btn btn-primary">Nuevo Producto</a>
+  <a href="./?view=inventary&stock=<?php echo StockData::getPrincipal()->id; ?>" class="btn btn-info">Inventario Principal</a>
+  <a href="./?view=spends" class="btn btn-warning">Gastos Adicionales</a>
 <!--  <a href="./?view=messages&opt=all" class="btn btn-default">Mensajes</a> -->
   </div>
   </div>

@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>SISTEMA | MIZAPATILLA</title>
+    <title>SISTEMA | CALZADO</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 3.3.4 -->
     <link href="plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -42,9 +42,9 @@
         <!-- Logo -->
         <a href="./" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
-          <span class="logo-mini"><b>M</b>Z</span>
+          <span class="logo-mini"><b>S</b>C</span>
           <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg">MI<b>&nbsp;ZAPATILLA</b></span>
+          <span class="logo-lg">SISTEMA<b>&nbsp;CALZADO</b></span>
         </a>
 
         <!-- Header Navbar -->
